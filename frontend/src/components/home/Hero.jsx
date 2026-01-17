@@ -1,29 +1,37 @@
+import GridBackground from "@/components/ui/GridBackground";
+import Link from "next/link";
+
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background layer (static for now) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white" />
+    <section className="relative min-h-[100vh] flex items-center overflow-hidden">
+      <GridBackground variant="hero" />
 
-      {/* Content */}
-      <div className="relative z-10 max-w-5xl px-6 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <h1 className="text-5xl md:text-6xl font-semibold tracking-tight">
-          Structured Learning.
+          Learn Skills That
           <br />
-          Real Projects.
+          Actually Matter
         </h1>
 
         <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
-          Learn through carefully designed training paths built around
-          real-world tasks and projects.
+          Structured training paths, real-world projects, and
+          industry-aligned learning — all in one place.
         </p>
 
-        <div className="mt-10">
-          <a
+        <div className="mt-10 flex justify-center gap-4">
+          <Link
             href="/training"
-            className="inline-flex items-center justify-center rounded-md bg-black px-8 py-4 text-white text-sm font-medium hover:bg-gray-900 transition"
+            className="px-7 py-3 rounded-md bg-black text-white hover:bg-gray-900 transition"
           >
             Explore Trainings
-          </a>
+          </Link>
+
+          <Link
+            href="/about"
+            className="px-7 py-3 rounded-md border border-gray-300 hover:bg-gray-50 transition"
+          >
+            How It Works
+          </Link>
         </div>
       </div>
     </section>

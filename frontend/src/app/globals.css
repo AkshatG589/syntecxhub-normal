@@ -21,3 +21,91 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+
+/* Animations for grid background */
+/* Grid moves forward then backward */
+@keyframes gridOscillate {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 16px 16px;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.animate-gridOscillate {
+  animation: gridOscillate 18s ease-in-out infinite;
+}
+
+
+/* ================= QR SCANNER SYSTEM ================= */
+
+/* Container that moves across full hero height */
+.qr-scan-container {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  animation: qrScanMove 4.5s linear infinite;
+}
+
+/* Thin, visible scan line */
+.qr-scan-line {
+  position: absolute;
+  top: 0%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(236, 72, 153, 0.9),
+    rgba(168, 85, 247, 0.9),
+    transparent
+  );
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.7);
+}
+
+/* Color trail left behind */
+.qr-scan-trail {
+  position: absolute;
+  top: -300px;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(
+    to top,
+    rgba(236, 72, 153, 0.35),
+    rgba(168, 85, 247, 0.25),
+    transparent
+  );
+  filter: blur(16px);
+}
+
+/* Scan animation */
+@keyframes qrScanMove {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+

@@ -14,12 +14,7 @@ import {
   BookOpen,
   Trophy,
 } from "lucide-react";
-import {
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 
 /* ---------------- NAV CONFIG ---------------- */
 const NAV_LINKS = [
@@ -48,7 +43,7 @@ export default function Navbar() {
             pointer-events-auto
             flex items-center justify-between
             px-6 h-14
-            w-[80%] max-w-7xl
+            w-[96%] max-w-7xl
             backdrop-blur-xl bg-white/80
             border border-gray-200
             rounded-xl shadow-sm
@@ -69,7 +64,7 @@ export default function Navbar() {
             </Link>
 
             {/* Divider */}
-            <span className="hidden md:block text-gray-300">|</span>
+            <span className="hidden md:block text-gray-500">|</span>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-4 text-sm">
@@ -113,7 +108,8 @@ export default function Navbar() {
             <SignedIn>
               <div className="flex items-center gap-3">
                 <UserButton />
-                <div className="sm:hidden flex flex-col text-xs">
+
+                <div className="hidden lg:flex flex-col text-xs">
                   <span className="font-medium text-gray-800 truncate max-w-[160px]">
                     {user?.fullName}
                   </span>

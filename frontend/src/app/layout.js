@@ -23,14 +23,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* ClerkProvider must be the FIRST thing inside body */}
         <ClerkProvider>
           <Navbar />
 
-          {/* Page content */}
-          <main className="pt-20 px-4 md:px-8 min-h-[calc(100vh-80px)]">
+          <main className="pt-20  min-h-screen">
             {children}
           </main>
         </ClerkProvider>
