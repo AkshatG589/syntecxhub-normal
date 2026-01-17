@@ -1,14 +1,19 @@
 @import "tailwindcss";
 
-/* Global design tokens */
+/* =========================================================
+   GLOBAL DESIGN TOKENS (Light Theme)
+   These variables allow easy future theming
+   ========================================================= */
 :root {
   --background: #ffffff;
-  --foreground: #111827; /* neutral dark, not pure black */
-  --muted: #6b7280;
-  --border: #e5e7eb;
+  --foreground: #111827; /* Neutral dark (better than pure black) */
+  --muted: #6b7280;      /* For secondary text */
+  --border: #e5e7eb;     /* For subtle borders */
 }
 
-/* Base styles */
+/* =========================================================
+   BASE STYLES
+   ========================================================= */
 html,
 body {
   background-color: var(--background);
@@ -16,15 +21,18 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* Smooth rendering */
+/* Improves text rendering on all platforms */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* =========================================================
+   GRID BACKGROUND ANIMATION
+   Subtle oscillation to avoid static feel
+   ========================================================= */
 
-/* Animations for grid background */
-/* Grid moves forward then backward */
+/* Grid gently moves forward and backward */
 @keyframes gridOscillate {
   0% {
     background-position: 0 0;
@@ -38,26 +46,27 @@ body {
 }
 
 .animate-gridOscillate {
-  animation: gridOscillate 18s ease-in-out infinite;
+  animation: gridOscillate 12s ease-in-out infinite;
 }
 
+/* =========================================================
+   QR-STYLE SCANNER SYSTEM (Hero Background)
+   ========================================================= */
 
-/* ================= QR SCANNER SYSTEM ================= */
-
-/* Container that moves across full hero height */
+/* Container moves vertically across full hero height */
 .qr-scan-container {
   position: absolute;
-  top: -20%;
+  top: -20%;         /* Starts above visible area */
   left: 0;
   width: 100%;
-  height: 120%;
+  height: 120%;      /* Ensures full coverage */
   animation: qrScanMove 4.5s linear infinite;
 }
 
-/* Thin, visible scan line */
+/* Thin, visible scan line (cutting edge) */
 .qr-scan-line {
   position: absolute;
-  top: 0%;
+  top: 0;
   left: 0;
   width: 100%;
   height: 2px;
@@ -71,10 +80,10 @@ body {
   box-shadow: 0 0 14px rgba(236, 72, 153, 0.7);
 }
 
-/* Color trail left behind */
+/* Soft color trail ABOVE the scan line (scanner memory) */
 .qr-scan-trail {
   position: absolute;
-  top: -300px;
+  top: -300px;       /* Trail stays above the line */
   left: 0;
   width: 100%;
   height: 300px;
@@ -87,25 +96,58 @@ body {
   filter: blur(16px);
 }
 
-/* Scan animation */
+/* Vertical scan movement */
 @keyframes qrScanMove {
   0% {
     transform: translateY(0);
     opacity: 0;
   }
-
   10% {
     opacity: 1;
   }
-
   90% {
     opacity: 1;
   }
-
   100% {
     transform: translateY(100%);
     opacity: 0;
   }
 }
 
+/* =========================================================
+   FLOATING AMBIENT MOTION (Hero Assets)
+   ========================================================= */
 
+/* Slow, calm floating motion */
+@keyframes floatSlow {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Even slower variation for visual desync */
+@keyframes floatSlower {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-floatSlow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.animate-floatSlower {
+  animation: floatSlower 11s ease-in-out infinite;
+}

@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         <ClerkProvider>
           <Navbar />
 
-          <main className="pt-20  min-h-screen">
+          <main className="pt-20 min-h-screen">
             {children}
           </main>
         </ClerkProvider>
