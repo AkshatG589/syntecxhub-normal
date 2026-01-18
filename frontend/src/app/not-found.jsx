@@ -1,5 +1,5 @@
 import Link from "next/link";
-import GridBackground from "@/components/ui/GridBackground";
+import GridBackground from "@/components/ui/backgrounds/GridBackground";
 import { ArrowLeft, Home } from "lucide-react";
 
 export default function NotFound() {

@@ -1,17 +1,15 @@
 import Hero from "@/components/home/Hero";
+import Stats from "@/components/home/Stats";
 import WhatWeOffer from "@/components/home/WhatWeOffer";
-import DomainsPreview from "@/components/home/DomainsPreview";
-import HowItWorks from "@/components/home/HowItWorks";
-import FinalCTA from "@/components/home/FinalCTA";
+import HowLearningWorks from "@/components/home/HowLearningWorks";
 
 export default function HomePage() {
   return (
-    <main className="flex flex-col">
+    <>
       <Hero />
+      <Stats />
       <WhatWeOffer />
-      <DomainsPreview />
-      <HowItWorks />
-      <FinalCTA />
-    </main>
+      <HowLearningWorks />
+    </>
   );
 }

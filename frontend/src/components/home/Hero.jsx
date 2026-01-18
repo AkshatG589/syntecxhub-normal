@@ -1,4 +1,4 @@
-import GridBackground from "@/components/ui/GridBackground";
+import GridBackground from "@/components/ui/backgrounds/GridBackground";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, LayoutDashboard } from "lucide-react";
