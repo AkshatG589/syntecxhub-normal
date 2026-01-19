@@ -21,7 +21,6 @@ const NAV_LINKS = [
   { label: "Home", href: "/", icon: Home },
   { label: "About", href: "/about", icon: Info },
   { label: "Trainings", href: "/training", icon: GraduationCap },
-  { label: "Internships", href: "/internships", icon: Briefcase },
   { label: "Courses", href: "/courses", icon: BookOpen },
   { label: "Hackathons", href: "/hackathons", icon: Trophy },
 ];
@@ -90,19 +89,22 @@ export default function Navbar() {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-3">
+            {/* Desktop Auth */}
             <SignedOut>
-              <Link
-                href="/sign-in"
-                className="text-sm text-gray-600 hover:text-black"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/sign-up"
-                className="text-sm px-4 py-1.5 rounded-full bg-black text-white hover:bg-gray-900 transition"
-              >
-                Get started
-              </Link>
+              <div className="hidden md:flex items-center gap-3">
+                <Link
+                  href="/sign-in"
+                  className="text-sm text-gray-600 hover:text-black"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="text-sm px-4 py-1.5 rounded-full bg-black text-white hover:bg-gray-900 transition"
+                >
+                  Get started
+                </Link>
+              </div>
             </SignedOut>
 
             <SignedIn>
@@ -120,7 +122,7 @@ export default function Navbar() {
               </div>
             </SignedIn>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setOpen(true)}
               className="md:hidden text-gray-700"
@@ -145,13 +147,13 @@ export default function Navbar() {
       {/* ================= MOBILE SLIDER ================= */}
       <aside
         className={`
-          fixed top-0 right-0 z-50
-          h-full w-80
-          bg-white shadow-xl
-          flex flex-col
-          transform transition-transform duration-300 ease-out
-          ${open ? "translate-x-0" : "translate-x-full"}
-        `}
+    fixed top-0 right-0 z-50
+    h-full w-[80%] sm:w-[75%] md:w-80
+    bg-white shadow-xl
+    flex flex-col
+    transform transition-transform duration-300 ease-out
+    ${open ? "translate-x-0" : "translate-x-full"}
+  `}
       >
         {/* Header */}
         <div className="h-16 px-6 flex items-center justify-between border-b">
@@ -193,18 +195,20 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Footer (USER INFO FIXED) */}
+        {/* Footer */}
         <div className="p-6 border-t">
           <SignedOut>
             <div className="flex flex-col gap-3">
               <Link
                 href="/sign-in"
+                onClick={() => setOpen(false)}
                 className="text-center py-2 rounded-md border"
               >
                 Sign in
               </Link>
               <Link
                 href="/sign-up"
+                onClick={() => setOpen(false)}
                 className="text-center py-2 rounded-md bg-black text-white"
               >
                 Get started

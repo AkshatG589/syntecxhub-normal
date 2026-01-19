@@ -10,23 +10,23 @@ const OFFERINGS = [
     icon: GraduationCap,
     title: "Training & Internship Programs",
     description:
-      "Carefully designed programs that combine structured learning with real internship exposure.",
+      "Carefully designed programs that combine structured training with guided internship exposure.",
   },
   {
     icon: Code,
-    title: "Real-World Projects",
+    title: "Real-World Project Experience",
     description:
       "Hands-on projects inspired by industry use cases to build practical skills and confidence.",
   },
   {
     icon: Target,
-    title: "Career-Focused Learning",
+    title: "Career-Focused Skill Development",
     description:
       "Every learning path is aligned with industry expectations and job-ready outcomes.",
   },
   {
     icon: Briefcase,
-    title: "Mentored Internship Experience",
+    title: "Mentored Training & Internship Journey",
     description:
       "Guidance, feedback, and structured tasks that simulate real professional environments.",
   },
@@ -45,8 +45,8 @@ export default function WhatWeOffer() {
             What We Offer
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-            A balanced ecosystem of learning, internships, and practical
-            exposure — designed to prepare you for the real world.
+            A balanced ecosystem of training, internships, and practical
+            exposure — designed to prepare you for real-world opportunities.
           </p>
         </div>
 

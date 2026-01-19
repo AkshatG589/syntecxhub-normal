@@ -1,7 +1,10 @@
+"use client";
+
 import GridBackground from "@/components/ui/backgrounds/GridBackground";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, LayoutDashboard } from "lucide-react";
+import { ArrowRight, LayoutDashboard, GraduationCap } from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function Hero() {
   return (
@@ -17,11 +20,7 @@ export default function Hero() {
           alt="Learning progress"
           width={300}
           height={220}
-          className="
-            absolute bottom-24 left-16
-            animate-floatSlower
-            drop-shadow-xl
-          "
+          className="absolute bottom-24 left-16 animate-floatSlower drop-shadow-xl"
         />
 
         {/* Achievement / Trophy */}
@@ -30,11 +29,7 @@ export default function Hero() {
           alt="Achievement"
           width={160}
           height={160}
-          className="
-            absolute bottom-28 right-20
-            animate-floatSlow
-            drop-shadow-lg
-          "
+          className="absolute bottom-28 right-20 animate-floatSlow drop-shadow-lg"
         />
       </div>
 
@@ -64,34 +59,71 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
-          <Link
-            href="/internships"
-            className="
-              inline-flex items-center justify-center gap-2
-              px-7 py-3 rounded-md
-              bg-black text-white
-              transition-all duration-300
-              hover:bg-gray-900 hover:gap-3
-            "
-          >
-            Explore Internships
-            <ArrowRight size={18} />
-          </Link>
 
-          <Link
-            href="/dashboard"
-            className="
-              inline-flex items-center justify-center gap-2
-              px-7 py-3 rounded-md
-              border border-gray-300
-              text-gray-700
-              transition-all duration-300
-              hover:bg-gray-50 hover:border-gray-400
-            "
-          >
-            <LayoutDashboard size={18} />
-            View Dashboard
-          </Link>
+          {/* SIGNED IN */}
+          <SignedIn>
+            <Link
+              href="/dashboard"
+              className="
+                inline-flex items-center justify-center gap-2
+                px-7 py-3 rounded-md
+                bg-black text-white
+                transition-all duration-300
+                hover:bg-gray-900 hover:gap-3
+              "
+            >
+              View Dashboard
+              <LayoutDashboard size={18} />
+            </Link>
+
+            <Link
+              href="/training"
+              className="
+                inline-flex items-center justify-center gap-2
+                px-7 py-3 rounded-md
+                border border-gray-300
+                text-gray-700
+                transition-all duration-300
+                hover:bg-gray-50 hover:border-gray-400
+              "
+            >
+              Explore Programs
+              <ArrowRight size={18} />
+            </Link>
+          </SignedIn>
+
+          {/* SIGNED OUT */}
+          <SignedOut>
+            <Link
+              href="/sign-up"
+              className="
+                inline-flex items-center justify-center gap-2
+                px-7 py-3 rounded-md
+                bg-black text-white
+                transition-all duration-300
+                hover:bg-gray-900 hover:gap-3
+              "
+            >
+              Get Started Free
+              <GraduationCap size={18} />
+            </Link>
+
+            <Link
+              href="/training"
+              className="
+                inline-flex items-center justify-center gap-2
+                px-7 py-3 rounded-md
+                border border-gray-300
+                text-gray-700
+                transition-all duration-300
+                hover:bg-gray-50 hover:border-gray-400
+              "
+            >
+              Explore Programs
+              <ArrowRight size={18} />
+            </Link>
+          </SignedOut>
+
         </div>
       </div>
     </section>

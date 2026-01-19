@@ -16,22 +16,32 @@ export default function GridBackground({ variant = "default" }) {
             linear-gradient(to bottom, rgba(0,0,0,${gridOpacity}) 1px, transparent 1px)
           `,
           backgroundSize: `${gridSize}px ${gridSize}px`,
-          maskImage:
-            "radial-gradient(circle at center, black 65%, transparent 100%)",
+          maskImage: `
+            linear-gradient(
+              to bottom,
+              black 0%,
+              black 70%,
+              rgba(0,0,0,0.4) 85%,
+              transparent 100%
+            )
+          `,
+          WebkitMaskImage: `
+            linear-gradient(
+              to bottom,
+              black 0%,
+              black 70%,
+              rgba(0,0,0,0.4) 85%,
+              transparent 100%
+            )
+          `,
         }}
       />
 
       {/* Vertical QR-style scanner */}
-
       <div className="absolute inset-0 pointer-events-none">
         <div className="qr-scan-container">
-          
-           {/* Sharp scan line */}
           <div className="qr-scan-line" />
-          
-          {/* Color trail */}
           <div className="qr-scan-trail" />
-
         </div>
       </div>
     </div>

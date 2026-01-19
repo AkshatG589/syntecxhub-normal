@@ -1,8 +1,11 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import "./globals.css";
+import { Toaster } from "sonner";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import "./globals.css";
 
+/* Fonts */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,22 +18,67 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+/* Improved Metadata (SEO-ready) */
 export const metadata = {
-  title: "Syntecxhub",
-  description: "Structured, project-based learning platform",
+  title: {
+    default: "Syntecxhub",
+    template: "%s | Syntecxhub",
+  },
+  description:
+    "Syntecxhub is a modern training & internship platform helping students build real-world skills through structured programs, projects, and future-ready learning.",
+  keywords: [
+    "Syntecxhub",
+    "training and internship",
+    "student internships",
+    "tech training",
+    "skill development",
+    "virtual internship",
+    "learning platform",
+  ],
+  authors: [{ name: "Syntecxhub" }],
+  creator: "Syntecxhub",
+  metadataBase: new URL("https://syntecxhub.com"),
+  openGraph: {
+    title: "Syntecxhub – Training & Internship Programs",
+    description:
+      "Learn practical skills, work on real projects, and gain hands-on internship experience with Syntecxhub.",
+    url: "https://syntecxhub.com",
+    siteName: "Syntecxhub",
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Syntecxhub – Training & Internship Programs",
+    description:
+      "Structured training & internship programs designed for real-world skills.",
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* ClerkProvider must be the FIRST thing inside body */}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <ClerkProvider>
+          {/* ✅ Sonner Toaster */}
+          <Toaster
+            position="top-right"
+            expand={true}
+            closeButton={true}
+            richColors={false}
+            duration={5000} // ✅ 5 mili seconds
+            visibleToasts={5}
+            gap={12}
+          />
+
           <Navbar />
 
-          <main className="pt-20 min-h-screen">
-            {children}
-          </main>
+          {/* Main Content */}
+          <main className="pt-20 min-h-screen">{children}</main>
+
+          <Footer />
         </ClerkProvider>
       </body>
     </html>

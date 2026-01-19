@@ -8,6 +8,11 @@ const trainingDomainRouter = require("./routes/training/domain");
 const trainingDurationRouter = require("./routes/training/duration");
 const trainingTaskRouter = require("./routes/training/task");
 
+
+//IMPORT NEWSLETTER ROUTER
+const newsletterRouter = require("./routes/newsletter/newsletter");  
+
+
 dotenv.config();
 connectDB();
 
@@ -39,9 +44,14 @@ app.get("/", (req, res) => {
 /* --------------------------------
    ROUTES
 --------------------------------- */
+
+// TRAINING ROUTES
 app.use("/api/training/domain", trainingDomainRouter);
 app.use("/api/training/duration", trainingDurationRouter);
-// app.use("/api/training/task", trainingTaskRouter);
+app.use("/api/training/task", trainingTaskRouter);
+
+// NEWSLETTER ROUTE
+app.use("/api/newsletter", newsletterRouter);
 
 /* --------------------------------
    SERVER

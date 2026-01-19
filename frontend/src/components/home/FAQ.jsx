@@ -68,13 +68,24 @@ export default function FAQ() {
             return (
               <div
                 key={item.question}
-                className="rounded-xl border border-gray-200 bg-white overflow-hidden"
+                className={`rounded-xl border bg-white overflow-hidden transition-all duration-300 ${
+                  isOpen
+                    ? "border-gray-400 shadow-sm"
+                    : "border-gray-200"
+                }`}
               >
+                {/* Question */}
                 <button
-                  onClick={() =>
-                    setOpenIndex(isOpen ? null : index)
-                  }
-                  className="w-full flex items-center justify-between px-2 py-2 text-left"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="
+                    w-full flex items-center justify-between
+                    px-4 py-3 text-left
+                    transition-colors
+                    hover:bg-gray-50
+                    focus:outline-none
+                    focus-visible:ring-2 focus-visible:ring-gray-300
+                    rounded-xl
+                  "
                 >
                   <span className="font-medium text-gray-800">
                     {item.question}
@@ -82,21 +93,26 @@ export default function FAQ() {
 
                   <ChevronDown
                     size={20}
-                    className={`transition-transform duration-300 ${
+                    className={`transition-transform duration-300 ease-out ${
                       isOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
-                {/* Animated Answer */}
+                {/* Answer */}
                 <div
                   className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen
-                      ? "grid-rows-[1fr] opacity-100"
-                      : "grid-rows-[0fr] opacity-0"
+                    isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                   }`}
                 >
-                  <div className="overflow-hidden px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                  <div
+                    className={`
+                      overflow-hidden px-4 pb-1
+                      text-sm text-gray-600 leading-relaxed
+                      transition-opacity duration-200
+                      ${isOpen ? "opacity-100 delay-100" : "opacity-0"}
+                    `}
+                  >
                     {item.answer}
                   </div>
                 </div>
