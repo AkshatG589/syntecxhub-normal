@@ -1,3 +1,5 @@
+"use client";
+
 export default function GridBackground({ variant = "default" }) {
   const gridOpacity = variant === "hero" ? 0.13 : 0.07;
   const gridSize = variant === "hero" ? 28 : 32;

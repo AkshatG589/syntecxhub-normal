@@ -1,3 +1,5 @@
+"use client";
+
 export default function HorizonGlow() {
   return (
     <div className="absolute inset-0 overflow-hidden">

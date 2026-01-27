@@ -1,6 +1,40 @@
 // models/TrainingDomain.js
 const mongoose = require("mongoose");
 
+/* Reusable media schema (Cloudflare R2 compatible) */
+const mediaSchema = new mongoose.Schema(
+  {
+    url: {
+      type: String,
+      required: true, // Public CDN URL
+    },
+
+    key: {
+      type: String,
+      required: true, // R2 object key (used for delete/update)
+    },
+
+    bucket: {
+      type: String,
+      default: "syntecxhub-assets",
+    },
+
+    contentType: {
+      type: String, // image/png, application/pdf, video/mp4
+    },
+
+    size: {
+      type: Number, // bytes
+    },
+
+    uploadedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
+);
+
 const trainingDomainSchema = new mongoose.Schema(
   {
     /* Core Identity */
@@ -8,7 +42,7 @@ const trainingDomainSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-    }, 
+    },
 
     slug: {
       type: String,
@@ -21,6 +55,18 @@ const trainingDomainSchema = new mongoose.Schema(
     maxDurationMonths: {
       type: Number,
       required: true,
+    },
+
+    /* Media (Primary Banner / Card Image) */
+    image: {
+      type: mediaSchema,
+      default: null,
+    },
+
+    /* Optional additional assets (future proof) */
+    assets: {
+      type: [mediaSchema], // PDFs, videos, extra images
+      default: [],
     },
 
     /* Short bullet points (for cards & highlights) */
