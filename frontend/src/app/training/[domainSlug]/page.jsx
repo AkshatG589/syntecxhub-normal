@@ -4,13 +4,7 @@ import { notFound } from "next/navigation";
 import { getDomainSSR } from "@/lib/api/training/domain.server";
 import { getDurationsByDomainSSR } from "@/lib/api/training/duration.server";
 
-import DomainHero from "@/components/training/domain/DomainHero";
-import DomainOverview from "@/components/training/domain/DomainOverview";
-import DomainDurations from "@/components/training/domain/DomainDurations";
-import DomainApart from "@/components/training/domain/DomainApart";
-import DomainOutcomes from "@/components/training/domain/DomainOutcomes";
-import DomainTestimonials from "@/components/training/domain/DomainTestimonials";
-import DomainFAQ from "@/components/training/domain/DomainFAQ";
+import { DomainHero, OverviewSection, SkillsSection, DurationsSection, QualificationSection, OutcomesSection, CertificateSection, ApartSection, UpcomingBatch, TestimonialsSection, FAQSection } from "@/components/training/domain";
 
 /* ================= SEO ================= */
 
@@ -39,9 +33,6 @@ export async function generateMetadata({ params }) {
 export default async function DomainPage({ params }) {
   const { domainSlug } = await params;
 
-  // 🔴 THIS LOG WILL APPEAR IN TERMINAL (NOT BROWSER)
-  console.log("[DomainPage] domainSlug =", domainSlug);
-
   if (!domainSlug) {
     notFound();
   }
@@ -54,8 +45,6 @@ export default async function DomainPage({ params }) {
       getDomainSSR(domainSlug),
       getDurationsByDomainSSR(domainSlug),
     ]);
-    console.log("[DomainPage] domain =", domain);
-    console.log("[DomainPage] durations =", durations); 
   } catch (error) {
     console.error("[DomainPage] fetch error:", error);
     notFound();
@@ -68,12 +57,16 @@ export default async function DomainPage({ params }) {
   return (
     <>
       <DomainHero domain={domain} />
-      <DomainOverview domain={domain} />
-      <DomainDurations durations={durations} domain={domain} />
-      <DomainApart />
-      <DomainOutcomes domain={domain} />
-      <DomainTestimonials />
-      <DomainFAQ />
+      <OverviewSection domain={domain} />
+      <SkillsSection domain={domain} />
+      <DurationsSection domain={domain} durations={durations} />
+      <QualificationSection domain={domain} />
+      <OutcomesSection domain={domain} />
+      <CertificateSection />
+      <ApartSection />
+      <UpcomingBatch />
+      <TestimonialsSection />
+      <FAQSection />
     </>
   );
 }

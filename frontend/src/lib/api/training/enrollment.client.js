@@ -1,5 +1,5 @@
-import api from "../../axios";
-import { handleApiError } from "../../handleApiError";
+import api from "../axios";
+import { handleApiError } from "../handleApiError";
 
 /* =================================================
    GET UPLOAD URL FOR PROFILE PHOTO
