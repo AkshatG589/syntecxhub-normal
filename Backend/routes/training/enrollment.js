@@ -22,6 +22,20 @@ router.post("/upload-url", async (req, res) => {
       });
     }
 
+    /* ---------- ALLOWED IMAGE TYPES ---------- */
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(contentType)) {
+      return res.status(400).json({
+        success: false,
+        message: "Only JPG, PNG, and WEBP images are allowed",
+      });
+    }
+
     const data = await generateUploadUrl({
       folder: "training-enrollments/profile-photos",
       originalName: fileName,
@@ -30,9 +44,17 @@ router.post("/upload-url", async (req, res) => {
 
     res.json({
       success: true,
-      data,
+      data: {
+        uploadUrl: data.uploadUrl,
+        key: data.key,
+        url: data.publicUrl, // aligns with mediaSchema "url"
+        bucket: "syntecxhub-assets",
+        contentType,
+      },
     });
   } catch (error) {
+    console.error("Upload URL Error:", error);
+
     res.status(500).json({
       success: false,
       message: "Failed to generate upload URL",
@@ -46,11 +68,19 @@ router.post("/upload-url", async (req, res) => {
 ================================================== */
 router.post("/apply", async (req, res) => {
   try {
+    /* ---------- AUTH USER (DO NOT TRUST BODY) ---------- */
+    const userId = req.auth?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
     const {
-      userId,
       domainIdentifier,
       durationIdentifier,
-
       fullName,
       email,
       phone,
@@ -66,7 +96,6 @@ router.post("/apply", async (req, res) => {
 
     /* ---------- BASIC VALIDATION ---------- */
     if (
-      !userId ||
       !domainIdentifier ||
       !durationIdentifier ||
       !fullName ||
@@ -77,6 +106,32 @@ router.post("/apply", async (req, res) => {
         success: false,
         message: "Missing required fields",
       });
+    }
+
+    /* ---------- EMAIL NORMALIZATION ---------- */
+    const normalizedEmail = email.toLowerCase().trim();
+
+    /* ---------- PROFILE PHOTO VALIDATION ---------- */
+    let validatedProfilePhoto = undefined;
+
+    if (profilePhoto) {
+      if (
+        !profilePhoto.url ||
+        !profilePhoto.key
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid profile photo structure",
+        });
+      }
+
+      validatedProfilePhoto = {
+        url: profilePhoto.url,
+        key: profilePhoto.key,
+        bucket: profilePhoto.bucket || "syntecxhub-assets",
+        contentType: profilePhoto.contentType,
+        size: profilePhoto.size,
+      };
     }
 
     /* ---------- RESOLVE DOMAIN ---------- */
@@ -97,6 +152,7 @@ router.post("/apply", async (req, res) => {
       });
     }
 
+    /* ---------- VALIDATE DOMAIN-DURATION MATCH ---------- */
     if (duration.domainId.toString() !== domain._id.toString()) {
       return res.status(400).json({
         success: false,
@@ -104,7 +160,7 @@ router.post("/apply", async (req, res) => {
       });
     }
 
-    /* ---------- DOMAIN LOCK ---------- */
+    /* ---------- DOMAIN LOCK CHECK ---------- */
     const existing = await TrainingEnrollment.findOne({
       userId,
       domainId: domain._id,
@@ -132,9 +188,9 @@ router.post("/apply", async (req, res) => {
       durationLabel: duration.label,
       months: duration.months,
 
-      fullName,
-      email,
-      phone,
+      fullName: fullName.trim(),
+      email: normalizedEmail,
+      phone: phone.trim(),
       gender,
       collegeName,
       degree,
@@ -142,7 +198,8 @@ router.post("/apply", async (req, res) => {
       priorExperience,
       source,
       referredBy,
-      profilePhoto,
+
+      profilePhoto: validatedProfilePhoto,
     });
 
     res.status(201).json({
@@ -157,13 +214,15 @@ router.post("/apply", async (req, res) => {
       });
     }
 
+    console.error("Apply Enrollment Error:", error);
+
     res.status(500).json({
       success: false,
       message: "Failed to apply for training",
-      error: error.message,
     });
   }
 });
+
 
 /* =================================================
    GET MY ENROLLMENTS

@@ -1,5 +1,48 @@
 const mongoose = require("mongoose");
 
+/* =========================================
+   REUSABLE MEDIA SCHEMA (R2 / CDN Based)
+========================================= */
+const mediaSchema = new mongoose.Schema(
+  {
+    url: {
+      type: String,
+      required: true, // Public CDN URL
+      trim: true,
+    },
+
+    key: {
+      type: String,
+      required: true, // R2 object key (for delete/update)
+      trim: true,
+    },
+
+    bucket: {
+      type: String,
+      default: "syntecxhub-assets",
+      trim: true,
+    },
+
+    contentType: {
+      type: String, // image/png, image/jpeg, application/pdf etc
+      trim: true,
+    },
+
+    size: {
+      type: Number, // file size in bytes
+    },
+
+    uploadedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
+);
+
+/* =========================================
+   TRAINING ENROLLMENT SCHEMA
+========================================= */
 const trainingEnrollmentSchema = new mongoose.Schema(
   {
     /* ===============================
@@ -12,23 +55,11 @@ const trainingEnrollmentSchema = new mongoose.Schema(
     },
 
     /* ===============================
-       OPTIONAL PROFESSIONAL PHOTO
-       (Uploaded separately to R2)
+       PROFESSIONAL PHOTO (R2)
     ================================ */
     profilePhoto: {
-      url: {
-        type: String, // Public CDN URL
-        trim: true,
-      },
-      key: {
-        type: String, // R2 object key
-        trim: true,
-      },
-      uploadedAt: {
-        type: Date,
-        default: Date.now,
-      },
-      _id: false,
+      type: mediaSchema,
+      required: false, // Optional upload
     },
 
     /* ===============================
@@ -48,7 +79,7 @@ const trainingEnrollmentSchema = new mongoose.Schema(
       index: true,
     },
 
-    /* Snapshot (for UI & certificates) */
+    /* Snapshot for certificates/UI */
     domainName: {
       type: String,
       required: true,
@@ -187,11 +218,11 @@ const trainingEnrollmentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-/* ===============================
+/* =========================================
    🔐 HARD DOMAIN LOCK
    One active/applied enrollment
    per domain per user
-=============================== */
+========================================= */
 trainingEnrollmentSchema.index(
   { userId: 1, domainId: 1 },
   {
