@@ -1,101 +1,60 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-
-import {
-  generateProfilePhotoUploadUrl,
-  uploadFileToR2,
-  applyForTraining,
+import { Input, Select, TextArea } from "./FormFields";
+import PhotoUploader from "./PhotoUploader";
+import Btn from "@/components/ui/button/Btn";
+import { 
+  generateProfilePhotoUploadUrl, 
+  uploadFileToR2, 
+  applyForTraining 
 } from "@/lib/api/training/enrollment.client";
 
 export default function ApplyForm({ domain, duration }) {
   const router = useRouter();
   const { getToken } = useAuth();
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    gender: "prefer_not_to_say",
-    collegeName: "",
-    degree: "",
-    yearOfStudy: "",
-    priorExperience: "",
-    source: "other",
-    referredBy: "",
-  });
-
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const [form, setForm] = useState({
+    fullName: "", email: "", phone: "", gender: "prefer_not_to_say",
+    collegeName: "", degree: "", yearOfStudy: "",
+    priorExperience: "", source: "other", referredBy: "",
+  });
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
+  const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const token = await getToken();
-
-      if (!token) {
-        throw new Error("Authentication failed");
-      }
-
       let profilePhotoPayload = null;
 
-      /* ==============================
-         STEP 1: Upload Image (If Exists)
-      =============================== */
       if (selectedFile) {
         const uploadData = await generateProfilePhotoUploadUrl({
-          originalName: selectedFile.name,
-          contentType: selectedFile.type,
-          token,
+          originalName: selectedFile.name, contentType: selectedFile.type, token,
         });
-
-        await uploadFileToR2({
-          uploadUrl: uploadData.uploadUrl,
-          file: selectedFile,
-        });
-
-        profilePhotoPayload = {
-          url: uploadData.url,
-          key: uploadData.key,
-          contentType: selectedFile.type,
-          size: selectedFile.size,
+        await uploadFileToR2({ uploadUrl: uploadData.uploadUrl, file: selectedFile });
+        profilePhotoPayload = { 
+          url: uploadData.url, 
+          key: uploadData.key, 
+          contentType: selectedFile.type, 
+          size: selectedFile.size 
         };
       }
 
-      /* ==============================
-         STEP 2: Submit Application
-      =============================== */
       await applyForTraining({
         token,
         formData: {
-          domainIdentifier: domain.slug,
-          durationIdentifier: duration.slug,
-          ...form,
-          profilePhoto: profilePhotoPayload,
+          domainIdentifier: domain.slug, durationIdentifier: duration.slug,
+          ...form, profilePhoto: profilePhotoPayload,
         },
       });
-
-      router.push(
-        `/training/${domain.slug}/apply/success`
-      );
+      router.push(`/training/${domain.slug}/apply/success`);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -104,151 +63,83 @@ export default function ApplyForm({ domain, duration }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
-      <h1 className="text-2xl font-semibold mb-6">
-        Apply for {domain.name} ({duration.label})
-      </h1>
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Application Form</h1>
+        <p className="text-gray-500 mt-2">
+          Applying for <span className="text-blue-600 font-medium">{domain.name}</span> • {duration.label}
+        </p>
+      </div>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-600 rounded">
-          {error}
-        </div>
-      )}
+      <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-100">
+        {error && (
+          <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Full Name */}
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          value={form.fullName}
-          onChange={handleChange}
-          required
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Email */}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Phone */}
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={form.phone}
-          onChange={handleChange}
-          required
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Gender */}
-        <select
-          name="gender"
-          value={form.gender}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        >
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-          <option value="prefer_not_to_say">
-            Prefer not to say
-          </option>
-        </select>
-
-        {/* College */}
-        <input
-          type="text"
-          name="collegeName"
-          placeholder="College Name"
-          value={form.collegeName}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Degree */}
-        <input
-          type="text"
-          name="degree"
-          placeholder="Degree"
-          value={form.degree}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Year */}
-        <input
-          type="text"
-          name="yearOfStudy"
-          placeholder="Year of Study"
-          value={form.yearOfStudy}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Experience */}
-        <textarea
-          name="priorExperience"
-          placeholder="Prior Experience"
-          value={form.priorExperience}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Source */}
-        <select
-          name="source"
-          value={form.source}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        >
-          <option value="instagram">Instagram</option>
-          <option value="linkedin">LinkedIn</option>
-          <option value="friend">Friend</option>
-          <option value="college">College</option>
-          <option value="google">Google</option>
-          <option value="youtube">YouTube</option>
-          <option value="other">Other</option>
-        </select>
-
-        {/* Referred By */}
-        <input
-          type="text"
-          name="referredBy"
-          placeholder="Referred By (Optional)"
-          value={form.referredBy}
-          onChange={handleChange}
-          className="w-full border p-3 rounded"
-        />
-
-        {/* Profile Photo */}
+        {/* Section 1: Profile & Personal Details */}
         <div>
-          <label className="block mb-2 font-medium">
-            Profile Photo (Optional)
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <h3 className="text-lg font-semibold border-b pb-2 mb-6 text-gray-800">Personal Information</h3>
+          
+          {/* Photo Uploader placed at the very top of the fields */}
+          <div className="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
+             <PhotoUploader onFileSelect={setSelectedFile} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input label="Full Name" name="fullName" value={form.fullName} onChange={handleChange} required placeholder="John Doe" />
+            <Input label="Email Address" type="email" name="email" value={form.email} onChange={handleChange} required placeholder="john@example.com" />
+            <Input label="Phone Number" name="phone" value={form.phone} onChange={handleChange} required placeholder="+91 00000 00000" />
+            <Select 
+              label="Gender" name="gender" value={form.gender} onChange={handleChange}
+              options={[
+                { label: "Male", value: "male" }, { label: "Female", value: "female" },
+                { label: "Other", value: "other" }, { label: "Prefer not to say", value: "prefer_not_to_say" }
+              ]}
+            />
+          </div>
         </div>
 
-        {/* Submit */}
-        <button
+        {/* Section 2: Academics */}
+        <div>
+          <h3 className="text-lg font-semibold border-b pb-2 mb-6 text-gray-800">Academic Background</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
+              <Input label="College Name" name="collegeName" value={form.collegeName} onChange={handleChange} placeholder="University of Technology" />
+            </div>
+            <Input label="Degree" name="degree" value={form.degree} onChange={handleChange} placeholder="B.Tech Computer Science" />
+            <Input label="Year of Study" name="yearOfStudy" value={form.yearOfStudy} onChange={handleChange} placeholder="3rd Year" />
+          </div>
+        </div>
+
+        {/* Section 3: Professional & Misc */}
+        <div>
+          <h3 className="text-lg font-semibold border-b pb-2 mb-6 text-gray-800">Additional Details</h3>
+          <div className="space-y-6">
+            <TextArea label="Prior Experience" name="priorExperience" value={form.priorExperience} onChange={handleChange} placeholder="Briefly describe any relevant skills or projects..." />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Select 
+                label="How did you hear about us?" name="source" value={form.source} onChange={handleChange}
+                options={[
+                  { label: "LinkedIn", value: "linkedin" }, { label: "Instagram", value: "instagram" },
+                  { label: "Google", value: "google" }, { label: "Friend/Senior", value: "friend" },
+                  { label: "Other", value: "other" }
+                ]}
+              />
+              <Input label="Referred By" name="referredBy" value={form.referredBy} onChange={handleChange} placeholder="Name of referrer" />
+            </div>
+          </div>
+        </div>
+
+        <Btn
           type="submit"
-          disabled={loading}
-          className="w-full bg-black text-white p-3 rounded hover:opacity-90 disabled:opacity-50"
-        >
-          {loading ? "Submitting..." : "Submit Application"}
-        </button>
+          text="Submit Application"
+          loadingText="Processing Application..."
+          loading={loading}
+          fullWidth={true}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 shadow-lg hover:shadow-blue-200"
+        />
       </form>
     </div>
   );
