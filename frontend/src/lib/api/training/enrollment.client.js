@@ -1,85 +1,71 @@
+"use client";
 import api from "../axios";
 import { handleApiError } from "../handleApiError";
 
-/* =================================================
-   GET UPLOAD URL FOR PROFILE PHOTO
-   POST /api/training/enrollment/upload-url
-================================================== */
-export async function getEnrollmentUploadUrl(payload) {
+/* =====================================================
+   🔹 Generate Presigned Upload URL
+===================================================== */
+export const generateProfilePhotoUploadUrl = async ({
+  originalName,
+  contentType,
+  token,
+}) => {
   try {
-    const res = await api.post(
-      "/api/training/enrollment/upload-url",
-      payload
+    const { data } = await api.post(
+      "/api/training/enrollment/profile-photo/upload-url",
+      { originalName, contentType },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    return res.data.data;
-  } catch (error) {
-    handleApiError(error);
-    return null;
-  }
-}
 
-/* =================================================
-   APPLY FOR TRAINING
-   POST /api/training/enrollment/apply
-================================================== */
-export async function applyForTraining(payload) {
+    return data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+/* =====================================================
+   🔹 Upload File Directly To R2
+===================================================== */
+export const uploadFileToR2 = async ({ uploadUrl, file }) => {
   try {
-    const res = await api.post(
+    await fetch(uploadUrl, {
+      method: "PUT",
+      body: file,
+      headers: {
+        "Content-Type": file.type,
+      },
+    });
+
+    return true;
+  } catch (error) {
+    throw new Error("File upload failed");
+  }
+};
+
+/* =====================================================
+   🔹 Apply For Training
+===================================================== */
+export const applyForTraining = async ({
+  formData,
+  token,
+}) => {
+  try {
+    const { data } = await api.post(
       "/api/training/enrollment/apply",
-      payload
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    return res.data.data;
-  } catch (error) {
-    handleApiError(error);
-    return null;
-  }
-}
 
-/* =================================================
-   GET MY ENROLLMENTS
-   GET /api/training/enrollment/me?userId=
-================================================== */
-export async function getMyEnrollments(userId) {
-  try {
-    const res = await api.get(
-      `/api/training/enrollment/me?userId=${userId}`
-    );
-    return res.data.data;
+    return data;
   } catch (error) {
-    handleApiError(error);
-    return [];
+    throw handleApiError(error);
   }
-}
-
-/* =================================================
-   UPDATE ENROLLMENT STATUS (ADMIN)
-   PATCH /api/training/enrollment/:id/status
-================================================== */
-export async function updateEnrollmentStatus(id, payload) {
-  try {
-    const res = await api.patch(
-      `/api/training/enrollment/${id}/status`,
-      payload
-    );
-    return res.data.data;
-  } catch (error) {
-    handleApiError(error);
-    return null;
-  }
-}
-
-/* =================================================
-   HARD DELETE ENROLLMENT (ADMIN)
-   DELETE /api/training/enrollment/:id
-================================================== */
-export async function deleteEnrollment(id) {
-  try {
-    const res = await api.delete(
-      `/api/training/enrollment/${id}`
-    );
-    return res.data;
-  } catch (error) {
-    handleApiError(error);
-    return null;
-  }
-}
+};

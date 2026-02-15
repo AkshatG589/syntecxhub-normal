@@ -31,3 +31,21 @@ export async function getDurationsByDomainSSR(identifier) {
   const json = await res.json();
   return json.data;
 }
+
+/**
+ * VALIDATE DOMAIN + DURATION MATCH (SSR)
+ * Used on Apply page
+ */
+export async function validateDomainDurationSSR(domainSlug, durationSlug) {
+  if (!domainSlug || !durationSlug) return null;
+
+  const res = await fetch(
+    `${API_BASE}/api/training/duration/validate/${domainSlug}/${durationSlug}`,
+    { cache: "no-store" }
+  );
+
+  if (!res.ok) return null;
+
+  const json = await res.json();
+  return json.data; // { domain, duration }
+}

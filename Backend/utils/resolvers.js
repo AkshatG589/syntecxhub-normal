@@ -1,53 +1,59 @@
-// utils/resolvers.js
 const mongoose = require("mongoose");
 const TrainingDomain = require("../models/TrainingDomain");
 const TrainingDuration = require("../models/TrainingDuration");
 
+
 const normalizeSlug = (v) =>
-  v.toLowerCase().trim().replace(/\s+/g, "-");
+  v?.toString().toLowerCase().trim().replace(/\s+/g, "-");
 
+/* =====================================================
+   Resolve Domain (by id or slug) + active check
+===================================================== */
 async function resolveDomain(identifier) {
+  if (!identifier) return null;
+
+  let domain = null;
+
   if (mongoose.Types.ObjectId.isValid(identifier)) {
-    const d = await TrainingDomain.findById(identifier);
-    if (d) return d;
+    domain = await TrainingDomain.findById(identifier);
   }
-  return TrainingDomain.findOne({ slug: normalizeSlug(identifier) });
+
+  if (!domain) {
+    domain = await TrainingDomain.findOne({
+      slug: normalizeSlug(identifier),
+    });
+  }
+
+  return domain;
 }
 
-async function resolveDuration(identifier) {
+/* =====================================================
+   Resolve Duration
+   Optional: enforce domain binding
+===================================================== */
+async function resolveDuration(identifier, domainId = null) {
+  if (!identifier) return null;
+
+  let query = {};
+
   if (mongoose.Types.ObjectId.isValid(identifier)) {
-    const d = await TrainingDuration.findById(identifier);
-    if (d) return d;
+    query._id = identifier;
+  } else {
+    query.slug = normalizeSlug(identifier);
   }
-  return TrainingDuration.findOne({ slug: normalizeSlug(identifier) });
+
+  if (domainId) {
+    query.domainId = domainId;
+  }
+
+  // Always enforce active durations
+  query.isActive = true;
+
+  return TrainingDuration.findOne(query);
 }
 
-async function getUserFromToken(req) {
-  const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return null;
-  }
-
-  const token = authHeader.replace("Bearer ", "");
-
-  try {
-    // Verify token
-    const decoded = await clerk.verifyToken(token);
-    const userId = decoded.sub;
-
-    if (!userId) return null;
-
-    return {
-      userId
-    };
-  } catch (err) {
-    console.error("Clerk token verification failed:", err.message);
-    return null;
-  }
-}
 module.exports = {
   resolveDomain,
   resolveDuration,
-  getUserFromToken,
 };

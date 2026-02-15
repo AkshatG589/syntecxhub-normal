@@ -1,6 +1,6 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const TrainingDomain = require("../../models/TrainingDomain");
+const { resolveDomain } = require("../../utils/resolvers");
 
 const router = express.Router();
 
@@ -10,7 +10,9 @@ const router = express.Router();
 -------------------------------------------------- */
 router.get("/", async (req, res) => {
   try {
-    const domains = await TrainingDomain.find().sort({ createdAt: -1 }).lean();
+    const domains = await TrainingDomain.find()
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -26,15 +28,12 @@ router.get("/", async (req, res) => {
 
 
 /* -------------------------------------------------
-   GET DOMAIN ID BY SLUG
-   GET /api/training/domain/resolve/:slug
+   RESOLVE DOMAIN (BY SLUG OR ID)
+   GET /api/training/domain/resolve/:identifier
 -------------------------------------------------- */
-router.get("/resolve/:slug", async (req, res) => {
+router.get("/resolve/:identifier", async (req, res) => {
   try {
-    const domain = await TrainingDomain.findOne(
-      { slug: req.params.slug },
-      { _id: 1, name: 1, slug: 1 }
-    );
+    const domain = await resolveDomain(req.params.identifier);
 
     if (!domain) {
       return res.status(404).json({
@@ -45,7 +44,11 @@ router.get("/resolve/:slug", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: domain,
+      data: {
+        _id: domain._id,
+        name: domain.name,
+        slug: domain.slug,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -57,12 +60,13 @@ router.get("/resolve/:slug", async (req, res) => {
 
 
 /* -------------------------------------------------
-   GET DOMAIN counts
+   GET DOMAIN COUNT
    GET /api/training/domain/stats/count
 -------------------------------------------------- */
 router.get("/stats/count", async (req, res) => {
   try {
     const count = await TrainingDomain.countDocuments();
+
     res.status(200).json({
       success: true,
       data: { count },
@@ -75,28 +79,15 @@ router.get("/stats/count", async (req, res) => {
   }
 });
 
+
 /* -------------------------------------------------
    GET SINGLE DOMAIN (ID OR SLUG)
    GET /api/training/domain/:identifier
 -------------------------------------------------- */
-
 router.get("/:identifier", async (req, res) => {
   try {
-    const { identifier } = req.params;
+    const domain = await resolveDomain(req.params.identifier);
 
-    let domain = null;
-
-    // 1️⃣ Try finding by ObjectId (SAFE)
-    if (mongoose.Types.ObjectId.isValid(identifier)) {
-      domain = await TrainingDomain.findById(identifier);
-    }
-
-    // 2️⃣ Fallback to slug if not found
-    if (!domain) {
-      domain = await TrainingDomain.findOne({ slug: identifier });
-    }
-
-    // 3️⃣ Not found
     if (!domain) {
       return res.status(404).json({
         success: false,
@@ -104,11 +95,11 @@ router.get("/:identifier", async (req, res) => {
       });
     }
 
-    // 4️⃣ Success
     res.status(200).json({
       success: true,
       data: domain,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,

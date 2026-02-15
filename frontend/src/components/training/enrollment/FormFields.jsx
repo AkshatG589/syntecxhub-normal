@@ -1,186 +1,107 @@
-"use client";
-
-export default function FormFields({ value, onChange }) {
-  const update = (key, val) =>
-    onChange((prev) => ({ ...prev, [key]: val }));
-
+export default function FormFields({ formData, handleChange }) {
   return (
-    <div className="space-y-10">
-      {/* ================= APPLICANT DETAILS ================= */}
-      <Section title="Personal Information">
-        <Grid>
-          <Input
-            label="Full Name"
-            required
-            value={value.fullName}
-            onChange={(e) => update("fullName", e.target.value)}
-          />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <Input
-            label="Email Address"
-            value={value.email}
-            disabled
-          />
-
-          <Input
-            label="Phone Number"
-            required
-            value={value.phone}
-            onChange={(e) => update("phone", e.target.value)}
-          />
-
-          <Select
-            label="Gender"
-            value={value.gender}
-            onChange={(e) => update("gender", e.target.value)}
-            options={[
-              { value: "prefer_not_to_say", label: "Prefer not to say" },
-              { value: "male", label: "Male" },
-              { value: "female", label: "Female" },
-              { value: "other", label: "Other" },
-            ]}
-          />
-        </Grid>
-      </Section>
-
-      {/* ================= EDUCATION ================= */}
-      <Section title="Education & Background">
-        <Grid>
-          <Input
-            label="College / University"
-            value={value.collegeName}
-            onChange={(e) => update("collegeName", e.target.value)}
-          />
-
-          <Input
-            label="Degree / Course"
-            value={value.degree}
-            onChange={(e) => update("degree", e.target.value)}
-          />
-
-          <Input
-            label="Year of Study"
-            placeholder="e.g. 2nd Year, Final Year"
-            value={value.yearOfStudy}
-            onChange={(e) => update("yearOfStudy", e.target.value)}
-          />
-
-          <Textarea
-            label="Prior Experience (if any)"
-            placeholder="Internships, projects, skills..."
-            value={value.priorExperience}
-            onChange={(e) => update("priorExperience", e.target.value)}
-          />
-        </Grid>
-      </Section>
-
-      {/* ================= DISCOVERY ================= */}
-      <Section title="How did you hear about us?">
-        <Grid>
-          <Select
-            label="Source"
-            value={value.source}
-            onChange={(e) => update("source", e.target.value)}
-            options={[
-              { value: "instagram", label: "Instagram" },
-              { value: "linkedin", label: "LinkedIn" },
-              { value: "friend", label: "Friend" },
-              { value: "college", label: "College" },
-              { value: "google", label: "Google" },
-              { value: "youtube", label: "YouTube" },
-              { value: "other", label: "Other" },
-            ]}
-          />
-
-          <Input
-            label="Referred By (optional)"
-            value={value.referredBy}
-            onChange={(e) => update("referredBy", e.target.value)}
-          />
-        </Grid>
-      </Section>
-    </div>
-  );
-}
-
-/* ================== UI HELPERS ================== */
-
-function Section({ title, children }) {
-  return (
-    <div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        {title}
-      </h3>
-      {children}
-    </div>
-  );
-}
-
-function Grid({ children }) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {children}
-    </div>
-  );
-}
-
-function Input({ label, required, ...props }) {
-  return (
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
       <input
-        {...props}
-        className="
-          w-full rounded-lg border border-gray-300
-          px-3 py-2 text-sm
-          focus:outline-none focus:ring-2 focus:ring-blue-500
-        "
+        suppressHydrationWarning
+        type="text"
+        name="fullName"
+        placeholder="Full Name"
+        required
+        value={formData.fullName}
+        onChange={handleChange}
+        className="input"
       />
-    </div>
-  );
-}
 
-function Textarea({ label, ...props }) {
-  return (
-    <div className="space-y-1 md:col-span-2">
-      <label className="text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      <textarea
-        {...props}
-        rows={4}
-        className="
-          w-full rounded-lg border border-gray-300
-          px-3 py-2 text-sm
-          focus:outline-none focus:ring-2 focus:ring-blue-500
-        "
+      <input
+        suppressHydrationWarning
+        type="tel"
+        name="phone"
+        placeholder="Phone Number"
+        required
+        value={formData.phone}
+        onChange={handleChange}
+        className="input"
       />
-    </div>
-  );
-}
 
-function Select({ label, options, ...props }) {
-  return (
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        {label}
-      </label>
       <select
-        {...props}
-        className="
-          w-full rounded-lg border border-gray-300
-          px-3 py-2 text-sm bg-white
-          focus:outline-none focus:ring-2 focus:ring-blue-500
-        "
+        suppressHydrationWarning
+        name="gender"
+        value={formData.gender}
+        onChange={handleChange}
+        className="input"
       >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
+        <option value="prefer_not_to_say">Prefer not to say</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
       </select>
+
+      <input
+        suppressHydrationWarning
+        type="text"
+        name="collegeName"
+        placeholder="College Name"
+        value={formData.collegeName}
+        onChange={handleChange}
+        className="input"
+      />
+
+      <input
+        suppressHydrationWarning
+        type="text"
+        name="degree"
+        placeholder="Degree"
+        value={formData.degree}
+        onChange={handleChange}
+        className="input"
+      />
+
+      <input
+        suppressHydrationWarning
+        type="text"
+        name="yearOfStudy"
+        placeholder="Year of Study"
+        value={formData.yearOfStudy}
+        onChange={handleChange}
+        className="input"
+      />
+
+      <input
+        suppressHydrationWarning
+        type="text"
+        name="priorExperience"
+        placeholder="Prior Experience"
+        value={formData.priorExperience}
+        onChange={handleChange}
+        className="input"
+      />
+
+      <select
+        suppressHydrationWarning
+        name="source"
+        value={formData.source}
+        onChange={handleChange}
+        className="input"
+      >
+        <option value="other">Other</option>
+        <option value="instagram">Instagram</option>
+        <option value="linkedin">LinkedIn</option>
+        <option value="friend">Friend</option>
+        <option value="college">College</option>
+        <option value="google">Google</option>
+        <option value="youtube">YouTube</option>
+      </select>
+
+      <input
+        suppressHydrationWarning
+        type="text"
+        name="referredBy"
+        placeholder="Referred By (optional)"
+        value={formData.referredBy}
+        onChange={handleChange}
+        className="input"
+      />
     </div>
   );
 }

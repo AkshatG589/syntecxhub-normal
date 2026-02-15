@@ -37,7 +37,7 @@ const mediaSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 /* =========================================
@@ -123,12 +123,15 @@ const trainingEnrollmentSchema = new mongoose.Schema(
       required: true,
       lowercase: true,
       trim: true,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      index: true,
     },
 
     phone: {
       type: String,
       required: true,
       trim: true,
+      match: /^[0-9]{10}$/,
     },
 
     gender: {
@@ -215,7 +218,7 @@ const trainingEnrollmentSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 /* =========================================
@@ -230,10 +233,7 @@ trainingEnrollmentSchema.index(
     partialFilterExpression: {
       status: { $in: ["applied", "active"] },
     },
-  }
+  },
 );
 
-module.exports = mongoose.model(
-  "TrainingEnrollment",
-  trainingEnrollmentSchema
-);
+module.exports = mongoose.model("TrainingEnrollment", trainingEnrollmentSchema);
