@@ -1,6 +1,6 @@
 "use client";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Input, Select, TextArea } from "./FormFields";
 import PhotoUploader from "./PhotoUploader";
@@ -10,9 +10,10 @@ import {
   uploadFileToR2, 
   applyForTraining 
 } from "@/lib/api/training/enrollment.client";
+// Import the Server Action we created
+import { completeEnrollmentAction } from "@/lib/api/training/enrollment.server";
 
 export default function ApplyForm({ domain, duration }) {
-  const router = useRouter();
   const { getToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,6 +35,7 @@ export default function ApplyForm({ domain, duration }) {
       const token = await getToken();
       let profilePhotoPayload = null;
 
+      // 1. Handle Photo Upload
       if (selectedFile) {
         const uploadData = await generateProfilePhotoUploadUrl({
           originalName: selectedFile.name, contentType: selectedFile.type, token,
@@ -47,6 +49,7 @@ export default function ApplyForm({ domain, duration }) {
         };
       }
 
+      // 2. Submit Application to your API
       await applyForTraining({
         token,
         formData: {
@@ -54,11 +57,14 @@ export default function ApplyForm({ domain, duration }) {
           ...form, profilePhoto: profilePhotoPayload,
         },
       });
-      router.push(`/training/${domain.slug}/apply/success`);
+
+      // 3. Trigger Server Action to set the "Success Guard" cookie and redirect
+      // This is the "10/10" way to handle secure redirects
+      await completeEnrollmentAction(domain.slug);
+
     } catch (err) {
       setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only stop loading if there's an error
     }
   };
 
@@ -73,7 +79,7 @@ export default function ApplyForm({ domain, duration }) {
 
       <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-100">
         {error && (
-          <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+          <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm animate-pulse">
             {error}
           </div>
         )}
@@ -81,8 +87,6 @@ export default function ApplyForm({ domain, duration }) {
         {/* Section 1: Profile & Personal Details */}
         <div>
           <h3 className="text-lg font-semibold border-b pb-2 mb-6 text-gray-800">Personal Information</h3>
-          
-          {/* Photo Uploader placed at the very top of the fields */}
           <div className="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
              <PhotoUploader onFileSelect={setSelectedFile} />
           </div>
@@ -138,7 +142,7 @@ export default function ApplyForm({ domain, duration }) {
           loadingText="Processing Application..."
           loading={loading}
           fullWidth={true}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 shadow-lg hover:shadow-blue-200"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 shadow-lg hover:shadow-blue-200 transition-all active:scale-[0.98]"
         />
       </form>
     </div>
