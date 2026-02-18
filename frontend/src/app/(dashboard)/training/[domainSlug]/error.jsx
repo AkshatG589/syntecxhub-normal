@@ -1,17 +1,14 @@
 "use client";
 
-export default function Error({ reset }) {
+import ErrorState from "@/components/ui/ErrorState";
+
+export default function TrainingError({ error, reset }) {
   return (
-    <div className="text-center py-32">
-      <h2 className="text-xl font-semibold">
-        Something went wrong
-      </h2>
-      <button
-        onClick={() => reset()}
-        className="mt-4 px-4 py-2 bg-black text-white rounded"
-      >
-        Try again
-      </button>
-    </div>
+    <ErrorState 
+      error={error} 
+      reset={reset} 
+      title="Program Data Load Failed"
+      description="We had trouble fetching the details for this training program. Please try refreshing."
+    />
   );
 }

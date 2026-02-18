@@ -8,12 +8,26 @@ import { CheckCircle, ArrowRight } from "lucide-react";
 ================================================== */
 export async function generateMetadata({ params }) {
   const { domainSlug } = await params;
+  
+  // 1. Check Access for Metadata
+  const cookieStore = await cookies();
+  const hasAccess = cookieStore.get("enrollment_confirmed");
+
+  // If no cookie, we don't return success titles. 
+  // Returning an empty object or basic robots allows the Root Layout 
+  // metadata template ("%s | Syntecxhub") to fallback to the default.
+  if (!hasAccess) {
+    return {
+      title: "Page Not Found", // This will render as "Page Not Found | Syntecxhub"
+      robots: { index: false, follow: false },
+    };
+  }
+
   const readableDomain = domainSlug ? domainSlug.replace(/-/g, " ") : "Program";
   
   return {
     title: `Enrollment Success | ${readableDomain}`,
-    description: `Congratulations! You have successfully enrolled in the ${readableDomain} training program.`,
-    // Important: Prevent success pages from appearing in Google search results
+    description: `Congratulations! You have successfully enrolled in the ${readableDomain} training program at Syntecxhub.`,
     robots: { 
       index: false, 
       follow: false 
@@ -28,14 +42,11 @@ export default async function SuccessPage({ params }) {
   const { domainSlug } = await params;
 
   // 1. ACCESS PROTECTION
-  // Check if the "enrollment_confirmed" cookie exists from our Server Action
   const cookieStore = await cookies();
   const hasAccess = cookieStore.get("enrollment_confirmed");
 
   if (!hasAccess) {
-    // If no cookie is found, the user likely typed the URL manually.
-    // Redirect them to not found page
-    notFound();
+    notFound(); // Triggers the nearest not-found.jsx
   }
 
   const readableDomain = domainSlug
@@ -109,7 +120,7 @@ export default async function SuccessPage({ params }) {
         </div>
 
         <p className="mt-8 text-xs text-gray-400">
-          Having trouble? Contact support@yourdomain.com
+          Having trouble? Contact support@syntecxhub.com
         </p>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
+// This will only match routes that contain "/apply" inside the training folder
 const isProtectedRoute = createRouteMatcher([
-  '/training(.*)', 
+  '/training/(.*)/apply(.*)', 
 ]);
 
-// Notice we don't call auth() as a function here anymore
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
     await auth.protect(); 

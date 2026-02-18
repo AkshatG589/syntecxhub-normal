@@ -1,9 +1,5 @@
-// src/app/training/loading.jsx
-import SkeletonLoader from "@/components/ui/loader/SkeletonLoader";
-export default function TrainingLoading() {
-  return (
-    <>
-      <SkeletonLoader />
-    </>
-  );
+import LoadingGrid from "@/components/ui/loader/LoadingGrid";
+
+export default function Loading() {
+  return <LoadingGrid items={6} />;
 }

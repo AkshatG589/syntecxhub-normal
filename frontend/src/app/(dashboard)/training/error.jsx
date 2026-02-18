@@ -1,8 +1,15 @@
 "use client";
 
-import { TrainingError } from "@/components/training";
+import ErrorState from "@/components/ui/ErrorState";
 
-export default function Error({ error, reset }) {
-  return <TrainingError error={error} reset={reset} />;
+export default function TrainingCatalogError({ error, reset }) {
+  return (
+    <ErrorState 
+      error={error} 
+      reset={reset} 
+      title="Unable to Load Training Catalog"
+      description="We ran into a technical hitch while fetching our training programs. This usually happens due to a temporary connection issue."
+      showHome={true}
+    />
+  );
 }
-    
